@@ -1,78 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interactive Past Tense Lesson</title>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Past Tense Game Show</title>
 <style>
-body{font-family:Arial;margin:0;background:#eef2ff;overflow:hidden}
-.slide{display:none;padding:40px;height:100vh;box-sizing:border-box}
-.active{display:block}
-button{padding:12px 20px;margin:10px;font-size:18px;border-radius:10px;border:none;cursor:pointer}
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#74ebd5,#9face6);overflow:hidden;color:#222}
+.slide{display:none;height:100vh;padding:40px;box-sizing:border-box;text-align:center}
+.active{display:block;animation:fade .6s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+button{padding:16px 25px;border:none;border-radius:20px;font-size:20px;cursor:pointer;background:#ffcc00;font-weight:bold;box-shadow:0 4px #cc9900}
 .nav{position:fixed;bottom:20px;right:20px}
-.word-box{padding:10px;background:white;border-radius:8px;margin:5px;display:inline-block}
-.correct{color:green;font-weight:bold}.wrong{color:red;font-weight:bold}
+.card{background:white;padding:30px;border-radius:25px;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.tug{font-size:60px;margin:30px}
+.word-box{display:inline-block;margin:8px;padding:10px 18px;border-radius:15px;background:#fff}
+.correct{color:green}.wrong{color:red}
 </style>
 </head>
 <body>
-<div class='slide active'>
-<h1>Past Tense Adventure!</h1>
-<h2>Warm-up: Make Words from <b>YESTERDAY</b></h2>
-<input id='wordInput'><button onclick='checkWord()'>Add</button>
-<div id='wordList'></div>
-<p>Wrong words get ❌ and are not added!</p>
-</div>
-
-<div class='slide'>
-<h2>Circle the Past Tense Sentence</h2>
-<p onclick='circle(this)'>I played soccer yesterday.</p>
-<p onclick='circle(this)'>I play soccer every day.</p>
-<p onclick='circle(this)'>I am playing soccer now.</p>
-</div>
-
-<div class='slide'>
-<h2>Past Tense Changes</h2>
-<p>play → played</p>
-<p>go → went</p>
-<p>see → saw</p>
-<p>run → ran</p>
-</div>
-
-<div class='slide'>
-<h2>Past vs Present Comparison</h2>
-<p>Clothes: old dress 👗 vs modern hoodie 🧥</p>
-<p>Toys: wooden toy 🪀 vs tablet 🎮</p>
-<p>Transportation: horse 🐎 vs car 🚗</p>
-</div>
-
-<div class='slide'>
-<h2>Battle Game ⚔️</h2>
-<p id='battleWord'></p>
-<div id='options'></div>
-<p>Student 1: <span id='p1'>0</span> Student 2: <span id='p2'>0</span></p>
-<p id='winner'></p>
-</div>
-
-<div class='nav'>
-<button onclick='prevSlide()'>Prev</button>
-<button onclick='nextSlide()'>Next</button>
-</div>
-
+<div class='slide active'><div class='card'><h1>🎮 PAST TENSE ADVENTURE</h1><h2>Warm-Up: Make words from YESTERDAY</h2><input id='wordInput'><button onclick='checkWord()'>ADD</button><div id='wordList'></div></div></div>
+<div class='slide'><div class='card'><h2>⭕ Circle the Past Tense Sentence</h2><p onclick='circle(this)'>I played soccer yesterday.</p><p onclick='circle(this)'>I play soccer every day.</p><p onclick='circle(this)'>I am playing soccer now.</p></div></div>
+<div class='slide'><div class='card'><h2>📚 Past Tense Rules</h2><p>play → played</p><p>go → went</p><p>see → saw</p><p>run → ran</p></div></div>
+<div class='slide'><div class='card'><h2>🕰 Past vs Present</h2><p>👗 old dress vs 🧥 hoodie</p><p>🪀 toy vs 🎮 tablet</p><p>🐎 horse vs 🚗 car</p></div></div>
+<div class='slide'><div class='card'><h2>⚔️ Tug of War Battle</h2><div class='tug' id='rope'>🧑‍🤝‍🧑🪢🧑‍🤝‍🧑</div><div style='display:flex;justify-content:space-around'><div><h3>Player 1</h3><div id='p1word'></div><div id='p1opts'></div></div><div><h3>Player 2</h3><div id='p2word'></div><div id='p2opts'></div></div></div><h2 id='winner'></h2></div></div>
+<div class='nav'><button onclick='prevSlide()'>⬅</button><button onclick='nextSlide()'>➡</button></div>
 <script>
-let slides=document.querySelectorAll('.slide');let current=0;
-function showSlide(){slides.forEach((s,i)=>s.classList.toggle('active',i===current));}
-function nextSlide(){if(current<slides.length-1)current++;showSlide();if(current===4)loadBattle();}
-function prevSlide(){if(current>0)current--;showSlide();}
-
-const validWords=['yes','day','red','read','sad','eat','tea','year','stay'];
-function checkWord(){let w=document.getElementById('wordInput').value.toLowerCase();let list=document.getElementById('wordList');if(validWords.includes(w)){list.innerHTML+=`<div class='word-box correct'>✔ ${w}</div>`;}else{list.innerHTML+=`<div class='word-box wrong'>❌ ${w}</div>`;}document.getElementById('wordInput').value='';}
-function circle(el){el.style.border='3px solid red';el.style.borderRadius='10px';}
-
-let p1=0,p2=0,turn=1;
-const battleQs=[['go',['goed','went','gone'],1],['see',['seed','saw','seen'],1],['run',['ran','runned','run'],0]];
-let q=0;
-function loadBattle(){if(q>=battleQs.length){document.getElementById('winner').innerText=p1>p2?'Student 1 Wins! 🏆':'Student 2 Wins! 🏆';return;}let b=battleQs[q];document.getElementById('battleWord').innerText='Past tense of '+b[0];let opts='';b[1].forEach((o,i)=>opts+=`<button onclick='pick(${i})'>${o}</button>`);document.getElementById('options').innerHTML=opts;}
-function pick(i){if(i===battleQs[q][2]){if(turn===1)p1++;else p2++;}turn=turn===1?2:1;if(turn===1)q++;document.getElementById('p1').innerText=p1;document.getElementById('p2').innerText=p2;loadBattle();}
+let slides=document.querySelectorAll('.slide'),current=0;function show(){slides.forEach((s,i)=>s.classList.toggle('active',i===current));if(current===4)loadBattle()}function nextSlide(){if(current<4)current++;show()}function prevSlide(){if(current>0)current--;show()}
+const valid=['yes','day','red','read','stay','tea','eat'];function checkWord(){let w=wordInput.value.toLowerCase();wordList.innerHTML+=valid.includes(w)?`<div class='word-box correct'>✔ ${w}</div>`:`<div class='word-box wrong'>❌ ${w}</div>`;wordInput.value=''}
+function circle(e){e.style.border='4px solid red';e.style.borderRadius='12px'}
+let p1=0,p2=0,q=0;const qs=[[['go',['goed','went','gone'],1],['see',['seed','saw','seen'],1]],[['run',['ran','runned','run'],0],['eat',['eated','ate','eaten'],1]]];
+function loadBattle(){if(q>=2){winner.innerText=p1>p2?'🏆 Player 1 Wins!':'🏆 Player 2 Wins!';return}loadSide(0,'p1');loadSide(1,'p2');rope.innerText=p1>p2?'🧑‍🤝‍🧑⬅🪢🧑‍🤝‍🧑':p2>p1?'🧑‍🤝‍🧑🪢➡🧑‍🤝‍🧑':'🧑‍🤝‍🧑🪢🧑‍🤝‍🧑'}
+function loadSide(player,id){document.getElementById(id+'word').innerText='Past tense of '+qs[player][q][0];document.getElementById(id+'opts').innerHTML=qs[player][q][1].map((o,i)=>`<button onclick='pick(${player},${i})'>${o}</button>`).join('')}
+let done=[false,false];function pick(player,i){if(i===qs[player][q][2])player===0?p1++:p2++;done[player]=true;if(done[0]&&done[1]){q++;done=[false,false];loadBattle()}else loadBattle()}
+show();
 </script>
-</body>
-</html>
+</body></html>
